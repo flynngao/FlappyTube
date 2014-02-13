@@ -1,6 +1,6 @@
 DEBUG = false
-SPEED = 100
-GRAVITY = 20
+SPEED = 160
+GRAVITY = 600
 SPAWN_RATE = 1 / 1200
 
 HEIGHT = 480
@@ -21,13 +21,17 @@ bloods = null
 gameStart = false
 gameOver  = false
 birdsTimer = null
-
+dieRate = null
 # Game Texts
 score = null
+bestScore = 0
+bestText = null
 scoreText = null
 instText = null
 gameOverText = null
-
+resetText = null
+gameStartText = null
+board = null
 # Sounds
 flapSnd = null
 scoreSnd = null
@@ -39,13 +43,27 @@ floor = Math.floor
 
 main = ->
 
-    hitBirds = ->
+    hitBirds = (tube,bird)->
 
+      bird.kill()
+
+      score += 1
+      bestScore = if score > bestScore then score else bestScore
+      scoreText.setText score
+
+      b = bloods.getFirstDead()
+      b.reset(bird.body.x,bird.body.y)
+      b.play('blood',20,false,true)
+      hurtSnd.play()
       return
 
     createBirds = ->
-      for i in [4...0]
-        bird = birds.create(game.world.width, i * (70-(Math.random()-0.5)*20), 'birdy')
+
+      dieRate = score / 100
+      for i in [10...0]
+        raceName = if Math.random() > dieRate then 'birdy' else 'birddie'
+        race = if raceName == 'birdy' then birds else birddie
+        bird = race.create(game.world.width-(Math.random()-0.5)*100, i * (35-(Math.random()-0.5)*5), raceName)
         bird.anchor.setTo 0.5, 0.5
         bird.body.velocity.x = -SPEED
       
@@ -57,10 +75,10 @@ main = ->
       start() unless gameStart 
 
       unless gameOver
-        tube.body.velocity.y = -100;
+        tube.body.velocity.y = -200;
         tube.body.gravity.y = 0;
 
-        tween = game.add.tween(tube.body.velocity).to(y:-20, 25, Phaser.Easing.Bounce.In,true);
+        tween = game.add.tween(tube.body.velocity).to(y:-280, 25, Phaser.Easing.Bounce.In,true);
         tween.onComplete.add ->
             tube.body.gravity.y = GRAVITY
 
@@ -70,21 +88,33 @@ main = ->
       return
 
     start = ->
-
       gameStart = true
-
-      # SPAWN birdS!
+      gameStartText.renderable = false
+      # SPAWN birds!
       birdsTimer = game.time.events.loop 1 / SPAWN_RATE, createBirds
       scoreText.setText score
+      
       return
 
     over = ->
       gameOver = true
 
       gameOverText.renderable = true
+      resetText.renderable = true
+      board.renderable = true
+      bestText.renderable = true
+      bestText.setText bestScore
+      bestText.x = 210
+      bestText.y = 240
+      scoreText.x = 210
+      scoreText.y = 195
       # Stop spawning tubes
       game.time.events.remove(birdsTimer)
 
+      game.time.events.add 1000, ->
+          game.input.onTap.addOnce ->
+            reset()
+      fallSnd.play()
       return
 
     preload = ->
@@ -95,6 +125,10 @@ main = ->
           "birddie": 'res/birddie.png'
           "g"      : 'res/g.png'
           "tube"   : 'res/tube.png'
+          "start"  : 'res/start.png'
+          "reset"  : 'res/reset.png'
+          "over"   : 'res/over.png'
+          "board"  : 'res/board.png'
         audio:
           "die"    : 'res/sfx_die.mp3'
           "hit"    : 'res/sfx_hit.mp3'
@@ -136,33 +170,63 @@ main = ->
 
       # Add sounds
       flapSnd = game.add.audio("flap")
-      scoreSnd = game.add.audio("score")
-      hurtSnd = game.add.audio("hurt")
-      fallSnd = game.add.audio("fall")
-      swooshSnd = game.add.audio("swoosh")      
+      scoreSnd = game.add.audio("point")
+      hurtSnd = game.add.audio("hit")
+      fallSnd = game.add.audio("die")     
       
+      #bloods
+      bloods = game.add.group()
+      bloods.createMultiple(20,'blood')
+      bloods.forEach((x)->
+        x.anchor.x = 0.5
+        x.anchor.y = 0.5
+        x.animations.add('blood')
+        return
+        this)
+
+      board = game.add.sprite(game.world.width / 2 ,game.world.height / 2.3,'board')
+      board.anchor.setTo 0.5, 0.5
+      board.scale.setTo 1, 1
+      board.renderable = false
 
       #score
       scoreText = game.add.text(game.world.width / 2, game.world.height / 6, "",
-        font: "10px \"sans\""
+        font: "20px \"sans\""
         fill: "#fff"
         stroke:"#bbb"
         strokeThickness:4
         align:"center")
       scoreText.anchor.setTo 0.5 , 0.5
 
+      bestText = game.add.text(game.world.width / 2, game.world.height / 6, "",
+        font: "20px \"sans\""
+        fill: "#fff"
+        stroke:"#bbb"
+        strokeThickness:4
+        align:"center")
+      bestText.anchor.setTo 0.5 , 0.5
+      bestText.renderable = false
+
+      gameStartText = game.add.sprite(game.world.width / 2, game.world.height / 2,'start')
+      gameStartText.anchor.setTo 0.5, 0.5
+      gameStartText.scale.setTo 1, 1
       # Add game over text
-      gameOverText = game.add.text(game.world.width / 2, game.world.height / 2, "",
-          font: "16px \"Press Start 2P\""
-          fill: "#fff"
-          stroke: "#430"
-          strokeThickness: 4
-          align: "center"
-      )
+      gameOverText = game.add.sprite(game.world.width / 2, game.world.height / 4,'over')
       gameOverText.anchor.setTo 0.5, 0.5
       gameOverText.scale.setTo 1, 1
+      gameOverText.renderable = false
+      
+      
 
+
+      resetText = game.add.sprite(game.world.width/ 2, game.world.height / 1.5,'reset')
+      resetText.anchor.setTo 0.5, 0.5
+      resetText.scale.setTo 1, 1
+      resetText.renderable = false
+
+      # control
       game.input.onDown.add flap
+
 
       reset()
 
@@ -178,7 +242,7 @@ main = ->
               fallSnd.play()
             over() if not gameOver and tube.body.bottom >= GROUND_Y
 
-            game.physics.overlap tube, birds, hitBirds
+            game.physics.overlap tube, birds, hitBirds, null ,this
 
             # Scroll ground 
             ground.tilePosition.x -= game.time.physicsElapsed * SPEED / 2 unless gameOver
@@ -202,8 +266,16 @@ main = ->
 
       gameStart = false
       gameOver  = false
+      gameOverText.renderable = false
+      resetText.renderable = false
+      gameStartText.renderable = true
+      board.renderable = false
+      bestText.renderable = false
 
       score = 0
+      scoreText.setText('Flappy Tube')
+      scoreText.x = game.world.width / 2
+      scoreText.y = game.world.height / 6
       birds.removeAll()
       tube.reset game.world.width * 0.3, game.world.height /2
 
