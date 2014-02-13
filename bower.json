@@ -1,0 +1,27 @@
+{
+  "name": "flappytube",
+  "version": "0.0.1",
+  "homepage": "https://github.com/flynngao/FlappyTube",
+  "authors": [
+    "Flynn Gao <flynn.gao.y@gmail.com>"
+  ],
+  "description": "Flappy Tube",
+  "main": "index.html",
+  "keywords": [
+    "H5",
+    "games",
+    "flappy"
+  ],
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies":{
+    "phaser": "~1.1.4"
+  }
+}

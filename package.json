@@ -1,0 +1,27 @@
+{
+  "name": "flappytube",
+  "version": "0.0.1",
+  "description": "Flppay Tube",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "game",
+    "flappy",
+    "tube"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:flynngao/FlappyTube.git"
+  },
+  "devDependencies": {
+    "gulp": "~3.5.2",
+    "coffee-script": "*",
+    "gulp-coffee": "*",
+    "gulp-util": "~2.2.14",
+    "gulp-connect": "*"
+  },
+  "author": "Flynn Gao",
+  "license": "MIT"
+}
