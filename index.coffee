@@ -8,6 +8,7 @@ WIDTH = 287
 GAME_HEIGHT = 336
 GROUND_HEIGHT = 64
 GROUND_Y = HEIGHT - GROUND_HEIGHT
+HARD = 500
 
 # Object
 tube = null
@@ -31,6 +32,7 @@ instText = null
 gameOverText = null
 resetText = null
 gameStartText = null
+avoidText = null
 board = null
 # Sounds
 flapSnd = null
@@ -59,11 +61,11 @@ main = ->
 
     createBirds = ->
 
-      dieRate = score / 100
-      for i in [10...0]
+      dieRate = score / HARD
+      for i in [(parseInt(Math.random()*10)%4+8)...0]
         raceName = if Math.random() > dieRate then 'birdy' else 'birddie'
         race = if raceName == 'birdy' then birds else birddie
-        bird = race.create(game.world.width-(Math.random()-0.5)*100, i * (35-(Math.random()-0.5)*5), raceName)
+        bird = race.create(game.world.width-(Math.random()-0.5)*120, i * (35-(Math.random()-0.5)*5), raceName)
         bird.anchor.setTo 0.5, 0.5
         bird.body.velocity.x = -SPEED
       
@@ -93,7 +95,7 @@ main = ->
       # SPAWN birds!
       birdsTimer = game.time.events.loop 1 / SPAWN_RATE, createBirds
       scoreText.setText score
-      
+      avoidText.renderable = false
       return
 
     over = ->
@@ -108,8 +110,11 @@ main = ->
       bestText.y = 240
       scoreText.x = 210
       scoreText.y = 195
+
+      document.getElementById('star').style.display = 'block';
       # Stop spawning tubes
       game.time.events.remove(birdsTimer)
+
 
       game.time.events.add 1000, ->
           game.input.onTap.addOnce ->
@@ -207,6 +212,15 @@ main = ->
       bestText.anchor.setTo 0.5 , 0.5
       bestText.renderable = false
 
+      avoidText = game.add.text(game.world.width / 2, game.world.height / 2.7, "",
+        font: "14px \"sans\""
+        fill: "#fff"
+        stroke:"#bbb"
+        strokeThickness:4
+        align:"center")
+      avoidText.anchor.setTo 0.5 , 0.5
+      avoidText.setText("Avoid this")
+
       gameStartText = game.add.sprite(game.world.width / 2, game.world.height / 2,'start')
       gameStartText.anchor.setTo 0.5, 0.5
       gameStartText.scale.setTo 1, 1
@@ -215,6 +229,8 @@ main = ->
       gameOverText.anchor.setTo 0.5, 0.5
       gameOverText.scale.setTo 1, 1
       gameOverText.renderable = false
+
+
       
       
 
@@ -271,13 +287,14 @@ main = ->
       gameStartText.renderable = true
       board.renderable = false
       bestText.renderable = false
-
+      avoidText.renderable = true
+      document.getElementById('star').style.display = 'none';
       score = 0
       scoreText.setText('Flappy Tube')
       scoreText.x = game.world.width / 2
       scoreText.y = game.world.height / 6
       birds.removeAll()
-      tube.reset game.world.width * 0.3, game.world.height /2
+      tube.reset game.world.width * 0.25, game.world.height /2.3
 
 
       return
