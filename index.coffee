@@ -1,6 +1,7 @@
 DEBUG = false
 SPEED = 100
 GRAVITY = 20
+SPAWN_RATE = 1 / 1200
 
 HEIGHT = 480
 WIDTH = 287
@@ -8,18 +9,25 @@ GAME_HEIGHT = 336
 GROUND_HEIGHT = 64
 GROUND_Y = HEIGHT - GROUND_HEIGHT
 
+# Object
 tube = null
 birds = null
+birddie = null
 ground = null
 bg = null
-
+blood = null
+bloods = null
+# Game Flow
 gameStart = false
 gameOver  = false
+
+# Game Texts
 score = null
 scoreText = null
 instText = null
 gameOverText = null
 
+# Sounds
 flapSnd = null
 scoreSnd = null
 hurtSnd = null
@@ -35,6 +43,10 @@ main = ->
       return
 
     createBirds = ->
+     for i in [4...0]
+        console.log i
+      
+        
       return
 
     flap = ->
@@ -57,10 +69,17 @@ main = ->
     start = ->
 
       gameStart = true
+
+      # SPAWN tubeS!
+      tubesTimer = game.time.events.loop 1 / SPAWN_RATE, createBirds
+      scoreText.setText score
       return
 
     over = ->
       gameOver = true
+
+      gameOverText.renderable = true
+
       return
 
     preload = ->
@@ -68,6 +87,7 @@ main = ->
         image:
           "bg"     : 'res/bg.png'
           "birdy"  : 'res/birdy.png'
+          "birddie": 'res/birddie.png'
           "g"      : 'res/g.png'
           "tube"   : 'res/tube.png'
         audio:
@@ -75,6 +95,9 @@ main = ->
           "hit"    : 'res/sfx_hit.mp3'
           "point"  : 'res/sfx_point.mp3'
           "flap"   : 'res/sfx_wing.mp3'
+        spritesheet:
+          "blood"  : ['res/blood.png',64, 64]
+
 
 
       Object.keys(assets).forEach (type) ->
@@ -101,6 +124,7 @@ main = ->
 
       # Add Birds
       birds = game.add.group()
+      birddie = game.add.group()
 
       tube  = game.add.sprite(0,0,"tube")
       tube.anchor.setTo(0.5 , 0.5)
@@ -112,6 +136,32 @@ main = ->
       fallSnd = game.add.audio("fall")
       swooshSnd = game.add.audio("swoosh")
 
+       #blood
+      blood = game.add.sprite(100, 100, 'blood')
+      
+
+      
+
+      #score
+      scoreText = game.add.text(game.world.width / 2, game.world.height / 6, "",
+        font: "10px \"sans\""
+        fill: "#fff"
+        stroke:"#bbb"
+        strokeThickness:4
+        align:"center")
+      scoreText.anchor.setTo 0.5 , 0.5
+
+      # Add game over text
+      gameOverText = game.add.text(game.world.width / 2, game.world.height / 2, "",
+          font: "16px \"Press Start 2P\""
+          fill: "#fff"
+          stroke: "#430"
+          strokeThickness: 4
+          align: "center"
+      )
+      gameOverText.anchor.setTo 0.5, 0.5
+      gameOverText.scale.setTo 1, 1
+
       game.input.onDown.add flap
 
       reset()
@@ -121,9 +171,27 @@ main = ->
     update = ->
       if gameStart
 
-        # Scroll ground 
-        ground.tilePosition.x -= game.time.physicsElapsed * SPEED / 2 unless gameOver
-        bg.tilePosition.x -= game.time.physicsElapsed * SPEED unless gameOver
+        unless gameOver
+            # Check game over
+            game.physics.overlap tube, birddie, ->
+              over()
+              fallSnd.play()
+            over() if not gameOver and tube.body.bottom >= GROUND_Y
+
+            game.physics.overlap tube, birds, hitBirds
+
+            # Scroll ground 
+            ground.tilePosition.x -= game.time.physicsElapsed * SPEED / 2 unless gameOver
+            bg.tilePosition.x -= game.time.physicsElapsed * SPEED unless gameOver
+
+
+        else
+            
+            if tube.body.bottom >= GROUND_Y + 3
+              tube.y = GROUND_Y - 13
+              tube.body.velocity.y = 0
+              tube.body.allowGravity = false
+              tube.body.gravity.y = 0            
 
       return
 
@@ -134,6 +202,7 @@ main = ->
 
       gameStart = false
       gameOver  = false
+
       score = 0
       birds.removeAll();
       createBirds();
