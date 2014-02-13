@@ -20,6 +20,7 @@ bloods = null
 # Game Flow
 gameStart = false
 gameOver  = false
+birdsTimer = null
 
 # Game Texts
 score = null
@@ -43,8 +44,10 @@ main = ->
       return
 
     createBirds = ->
-     for i in [4...0]
-        console.log i
+      for i in [4...0]
+        bird = birds.create(game.world.width, i * (70-(Math.random()-0.5)*20), 'birdy')
+        bird.anchor.setTo 0.5, 0.5
+        bird.body.velocity.x = -SPEED
       
         
       return
@@ -70,8 +73,8 @@ main = ->
 
       gameStart = true
 
-      # SPAWN tubeS!
-      tubesTimer = game.time.events.loop 1 / SPAWN_RATE, createBirds
+      # SPAWN birdS!
+      birdsTimer = game.time.events.loop 1 / SPAWN_RATE, createBirds
       scoreText.setText score
       return
 
@@ -79,6 +82,8 @@ main = ->
       gameOver = true
 
       gameOverText.renderable = true
+      # Stop spawning tubes
+      game.time.events.remove(birdsTimer)
 
       return
 
@@ -134,12 +139,7 @@ main = ->
       scoreSnd = game.add.audio("score")
       hurtSnd = game.add.audio("hurt")
       fallSnd = game.add.audio("fall")
-      swooshSnd = game.add.audio("swoosh")
-
-       #blood
-      blood = game.add.sprite(100, 100, 'blood')
-      
-
+      swooshSnd = game.add.audio("swoosh")      
       
 
       #score
@@ -204,9 +204,7 @@ main = ->
       gameOver  = false
 
       score = 0
-      birds.removeAll();
-      createBirds();
-
+      birds.removeAll()
       tube.reset game.world.width * 0.3, game.world.height /2
 
 
