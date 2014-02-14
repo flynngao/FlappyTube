@@ -91,6 +91,16 @@ main = function() {
   createBirds = function() {
     var bird, i, race, raceName, _i, _ref;
     dieRate = score / HARD;
+    birds.forEachAlive(function(bird) {
+      if (bird.x + bird.width < game.world.bounds.left) {
+        bird.kill();
+      }
+    });
+    birddie.forEachAlive(function(bird) {
+      if (bird.x + bird.width < game.world.bounds.left) {
+        bird.kill();
+      }
+    });
     for (i = _i = _ref = parseInt(Math.random() * 10) % 4 + 8; _ref <= 0 ? _i < 0 : _i > 0; i = _ref <= 0 ? ++_i : --_i) {
       raceName = Math.random() > dieRate ? 'birdy' : 'birddie';
       race = raceName === 'birdy' ? birds : birddie;

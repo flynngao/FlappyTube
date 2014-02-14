@@ -62,6 +62,15 @@ main = ->
     createBirds = ->
 
       dieRate = score / HARD
+      birds.forEachAlive (bird) ->
+          if bird.x + bird.width < game.world.bounds.left
+            bird.kill()
+          return
+      birddie.forEachAlive (bird) ->
+          if bird.x + bird.width < game.world.bounds.left
+            bird.kill()
+          return
+
       for i in [(parseInt(Math.random()*10)%4+8)...0]
         raceName = if Math.random() > dieRate then 'birdy' else 'birddie'
         race = if raceName == 'birdy' then birds else birddie
