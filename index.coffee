@@ -3,8 +3,8 @@ SPEED = 160
 GRAVITY = 600
 SPAWN_RATE = 1 / 1200
 
-HEIGHT = 480
-WIDTH = 320
+HEIGHT = if window.screen.height > window.screen.width then window.screen.height else 480 
+WIDTH = if window.screen.height > window.screen.width then window.screen.width else 320 
 GAME_HEIGHT = 336
 GROUND_HEIGHT = 64
 GROUND_Y = HEIGHT - GROUND_HEIGHT

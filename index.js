@@ -9,9 +9,9 @@ GRAVITY = 600;
 
 SPAWN_RATE = 1 / 1200;
 
-HEIGHT = 480;
+HEIGHT = window.screen.height > window.screen.width ? window.screen.height : 480;
 
-WIDTH = 320;
+WIDTH = window.screen.height > window.screen.width ? window.screen.width : 320;
 
 GAME_HEIGHT = 336;
 
