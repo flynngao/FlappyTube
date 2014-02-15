@@ -19,7 +19,7 @@ GROUND_HEIGHT = 64;
 
 GROUND_Y = HEIGHT - GROUND_HEIGHT;
 
-HARD = 50;
+HARD = 100;
 
 tube = null;
 
