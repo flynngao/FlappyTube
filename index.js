@@ -19,7 +19,7 @@ GROUND_HEIGHT = 64;
 
 GROUND_Y = HEIGHT - GROUND_HEIGHT;
 
-HARD = 500;
+HARD = 50;
 
 tube = null;
 
@@ -106,7 +106,7 @@ main = function() {
       race = raceName === 'birdy' ? birds : birddie;
       bird = race.create(game.world.width - (Math.random() - 0.5) * 120, i * (35 - (Math.random() - 0.5) * 5), raceName);
       bird.anchor.setTo(0.5, 0.5);
-      bird.body.velocity.x = -SPEED;
+      bird.body.velocity.x = -SPEED * 1.5;
     }
   };
   flap = function() {

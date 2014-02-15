@@ -4,11 +4,11 @@ GRAVITY = 600
 SPAWN_RATE = 1 / 1200
 
 HEIGHT = 480 
-WIDTH = 320 
+WIDTH = 320
 GAME_HEIGHT = 336
 GROUND_HEIGHT = 64
 GROUND_Y = HEIGHT - GROUND_HEIGHT
-HARD = 500
+HARD = 50
 
 # Object
 tube = null
@@ -76,7 +76,7 @@ main = ->
         race = if raceName == 'birdy' then birds else birddie
         bird = race.create(game.world.width-(Math.random()-0.5)*120, i * (35-(Math.random()-0.5)*5), raceName)
         bird.anchor.setTo 0.5, 0.5
-        bird.body.velocity.x = -SPEED
+        bird.body.velocity.x = -SPEED * 1.5
       
         
       return
