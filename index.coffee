@@ -12,8 +12,11 @@ HARD = 250
 
 # Object
 tube = null
-birds = null
-birddie = null
+birds:
+  "birdys" : null
+  "birdrs" : null
+  "birdbs" : null
+  "birddie" : null
 ground = null
 bg = null
 blood = null
@@ -62,7 +65,8 @@ main = ->
     createBirds = ->
 
       dieRate = score / HARD
-      birds.forEachAlive (bird) ->
+      superRate = 0.01
+      birdys.forEachAlive (bird) ->
           if bird.x + bird.width < game.world.bounds.left
             bird.kill()
           return
@@ -136,6 +140,8 @@ main = ->
         image:
           "bg"     : 'res/bg.png'
           "birdy"  : 'res/birdy.png'
+          "birdr"  : 'res/birdr.png'
+          "birdb"  : 'res/birdb.png'
           "birddie": 'res/birddie.png'
           "g"      : 'res/g.png'
           "tube"   : 'res/tube.png'
@@ -177,6 +183,7 @@ main = ->
 
       # Add Birds
       birds = game.add.group()
+      birdbs
       birddie = game.add.group()
 
       tube  = game.add.sprite(0,0,"tube")
@@ -267,7 +274,7 @@ main = ->
               fallSnd.play()
             over() if not gameOver and tube.body.bottom >= GROUND_Y
 
-            game.physics.overlap tube, birds, hitBirds, null ,this
+            game.physics.overlap tube, birdys, hitBirds, null ,this
 
             # Scroll ground 
             ground.tilePosition.x -= game.time.physicsElapsed * SPEED / 2 unless gameOver
@@ -302,7 +309,10 @@ main = ->
       scoreText.setText('Flappy Tube')
       scoreText.x = game.world.width / 2
       scoreText.y = game.world.height / 6
-      birds.removeAll()
+      birdys.removeAll()
+      birddie.removeAll()
+      birdrs.removeAll()
+      birdbs.removeAll()
       tube.reset game.world.width * 0.25, game.world.height /2.3
 
 
