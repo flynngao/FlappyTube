@@ -27,6 +27,7 @@ dieRate = null
 score = null
 bestScore = 0
 bestText = null
+comingsoon = null
 scoreText = null
 instText = null
 gameOverText = null
@@ -101,6 +102,7 @@ main = ->
     start = ->
       gameStart = true
       gameStartText.renderable = false
+      comingsoon.renderable = false
       # SPAWN birds!
       birdsTimer = game.time.events.loop 1 / SPAWN_RATE, createBirds
       scoreText.setText score
@@ -207,7 +209,7 @@ main = ->
       scoreText = game.add.text(game.world.width / 2, game.world.height / 6, "",
         font: "20px \"sans\""
         fill: "#fff"
-        stroke:"#bbb"
+        stroke:"#111"
         strokeThickness:4
         align:"center")
       scoreText.anchor.setTo 0.5 , 0.5
@@ -215,7 +217,7 @@ main = ->
       bestText = game.add.text(game.world.width / 2, game.world.height / 6, "",
         font: "20px \"sans\""
         fill: "#fff"
-        stroke:"#bbb"
+        stroke:"#111"
         strokeThickness:4
         align:"center")
       bestText.anchor.setTo 0.5 , 0.5
@@ -224,7 +226,7 @@ main = ->
       avoidText = game.add.text(game.world.width / 2, game.world.height / 2.7, "",
         font: "14px \"sans\""
         fill: "#fff"
-        stroke:"#bbb"
+        stroke:"#111"
         strokeThickness:4
         align:"center")
       avoidText.anchor.setTo 0.5 , 0.5
@@ -239,7 +241,15 @@ main = ->
       gameOverText.scale.setTo 1, 1
       gameOverText.renderable = false
 
-
+      comingsoon = game.add.text(game.world.width / 1.5, game.world.height / 4.5,'',
+        font: "12px \"sans\""
+        fill: "#d9d12b"
+        stroke:"#111"
+        strokeThickness:3
+        align:"center")
+      comingsoon.anchor.setTo 0.5, 0.5
+      comingsoon.scale.setTo 1, 1
+      comingsoon.setText('     ^\nComing soon!')
       
       
 
@@ -297,9 +307,10 @@ main = ->
       board.renderable = false
       bestText.renderable = false
       avoidText.renderable = true
+      comingsoon.renderable = true
       document.getElementById('star').style.display = 'none';
       score = 0
-      scoreText.setText('Flappy Tube')
+      scoreText.setText('Flappy Tube 2')
       scoreText.x = game.world.width / 2
       scoreText.y = game.world.height / 6
       birds.removeAll()
